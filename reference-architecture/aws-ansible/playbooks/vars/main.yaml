@@ -25,3 +25,9 @@ gluster_node01: "ose-{{ glusterfs_stack_name }}-node01"
 gluster_node02: "ose-{{ glusterfs_stack_name }}-node02"
 gluster_node03: "ose-{{ glusterfs_stack_name }}-node03"
 gluster_group: "{{ stack_name }}-{{ gluster_stack_name }}"
+
+# abs:
+#openshift_ansible_dir: /usr/share/ansible/openshift-ansible
+openshift_ansible_dir: /Users/adam/_dev/openshift-ansible
+debug_level: 4
+openshift_disable_check: disk_availability,docker_storage,memory_availability

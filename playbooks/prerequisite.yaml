@@ -1,11 +1,11 @@
 ---
-- hosts: nodes
-  gather_facts: yes
-  become: yes
-  roles:
-  - rhsm-timeout
-  - role: atomic-update
-    when: openshift.common.is_atomic
+# - hosts: nodes
+#   gather_facts: yes
+#   become: yes
+#   roles:
+#   - rhsm-timeout
+#   - role: atomic-update
+#     when: openshift.common.is_atomic
 
 - hosts: nodes
   gather_facts: no

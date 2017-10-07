@@ -316,6 +316,8 @@ def launch_refarch_env(region=None,
     github_client_secret=%s \
     github_organization=%s \
     deploy_glusterfs=%s \
+    openshift_ansible_dir=/Users/adam/_dev/openshift-ansible \
+    openshift_disable_check=disk_availability,docker_storage,memory_availability \
     openshift_hosted_metrics_deploy=%s \
     openshift_hosted_metrics_storage_volume_size=%s \
     openshift_hosted_logging_deploy=%s \
@@ -361,7 +363,7 @@ def launch_refarch_env(region=None,
                     playbook)
 
     if verbose > 0:
-      command += " -" + "".join(['v']*verbose)
+      command += " -" + "".join(['v']*3)
       click.echo('We are running: %s' % command)
 
     status = os.system(command)
