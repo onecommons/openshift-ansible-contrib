@@ -324,7 +324,7 @@
       "Properties": {
         "GroupDescription": "Infra Load Balancer",
         "VpcId": { "Ref": "Vpc" },
-        "Tags": [ {"Key": "Name", "Value": "ose_router_sg"} ],
+        "Tags": [ {"Key": "Name", "Value": "ose_router_sg"}}],
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
@@ -378,7 +378,10 @@
       "Properties": {
         "GroupDescription": "Node",
         "VpcId": { "Ref": "Vpc" },
-        "Tags": [ {"Key": "Name", "Value": "ose_node_sg"}, {"Key": "KubernetesCluster", "Value": { "Ref": "AWS::StackName" }}]
+        "Tags": [ {"Key": "Name", "Value": "ose_node_sg"},
+                  {"Key": "KubernetesCluster", "Value": { "Ref": "AWS::StackName" }},
+                  { "Key": "kubernetes.io/cluster/{{stack_name}}", "Value": { "Ref": "AWS::StackName" }}
+                ]
       }
     },
     "MasterSG": {
@@ -386,7 +389,7 @@
       "Properties": {
         "GroupDescription": "Master",
         "VpcId": { "Ref": "Vpc" },
-        "Tags": [ {"Key": "Name", "Value": "ose_master_sg"} ]
+        "Tags": [ {"Key": "Name", "Value": "ose_master_sg"}]
       }
     },
     "InfraElbEgressHTTP": {
@@ -977,7 +980,7 @@
           {
             "Name": {"Fn::Join": [".", ["bastion",{"Ref": "Route53HostedZone"}]]},
             "Type": "A",
-                        "TTL": "300",
+                        "TTL": "60",
                     "ResourceRecords": [{ "Fn::GetAtt" : ["Bastion", "PublicIp"] }]
           }
         ]
@@ -1043,6 +1046,12 @@
             },
             { "Key": "openshift-role",
               "Value": "master"
+            },
+            { "Key": "kubernetes.io/cluster/{{stack_name}}",
+              "Value": { "Ref": "AWS::StackName" }
+            },
+            { "Key": "clusterid",
+              "Value": { "Ref": "AWS::StackName" }
             }
           ],
           "BlockDeviceMappings" : [
@@ -1101,6 +1110,12 @@
             },
             { "Key": "openshift-role",
               "Value": "master"
+            },
+            { "Key": "kubernetes.io/cluster/{{stack_name}}",
+              "Value": { "Ref": "AWS::StackName" }
+            },
+            { "Key": "clusterid",
+              "Value": { "Ref": "AWS::StackName" }
             }
           ],
           "BlockDeviceMappings" : [
@@ -1159,6 +1174,12 @@
             },
             { "Key": "openshift-role",
               "Value": "master"
+            },
+            { "Key": "kubernetes.io/cluster/{{stack_name}}",
+              "Value": { "Ref": "AWS::StackName" }
+            },
+            { "Key": "clusterid",
+              "Value": { "Ref": "AWS::StackName" }
             }
           ],
           "BlockDeviceMappings" : [
@@ -1217,6 +1238,12 @@
             },
             { "Key": "openshift-role",
               "Value": "infra"
+            },
+            { "Key": "kubernetes.io/cluster/{{stack_name}}",
+              "Value": { "Ref": "AWS::StackName" }
+            },
+            { "Key": "clusterid",
+              "Value": { "Ref": "AWS::StackName" }
             }
           ],
           "BlockDeviceMappings" : [
@@ -1267,6 +1294,12 @@
             },
             { "Key": "openshift-role",
               "Value": "infra"
+            },
+            { "Key": "kubernetes.io/cluster/{{stack_name}}",
+              "Value": { "Ref": "AWS::StackName" }
+            },
+            { "Key": "clusterid",
+              "Value": { "Ref": "AWS::StackName" }
             }
           ],
           "BlockDeviceMappings" : [
@@ -1275,7 +1308,7 @@
             "Ebs": {
               "DeleteOnTermination": "true",
               "VolumeSize": "50",
-              "VolumeType": "gp2" 
+              "VolumeType": "gp2"
             }
           },
           {
@@ -1317,6 +1350,12 @@
             },
             { "Key": "openshift-role",
               "Value": "infra"
+            },
+            { "Key": "kubernetes.io/cluster/{{stack_name}}",
+              "Value": { "Ref": "AWS::StackName" }
+            },
+            { "Key": "clusterid",
+              "Value": { "Ref": "AWS::StackName" }
             }
           ],
           "BlockDeviceMappings" : [
@@ -1372,6 +1411,12 @@
             },
             { "Key": "openshift-role",
               "Value": "app"
+            },
+            { "Key": "kubernetes.io/cluster/{{stack_name}}",
+              "Value": { "Ref": "AWS::StackName" }
+            },
+            { "Key": "clusterid",
+              "Value": { "Ref": "AWS::StackName" }
             }
           ],
           "BlockDeviceMappings" : [

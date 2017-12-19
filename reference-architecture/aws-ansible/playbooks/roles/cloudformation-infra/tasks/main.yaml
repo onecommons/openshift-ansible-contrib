@@ -2,10 +2,14 @@
 - name: Render Greenfield Template
   template: src=roles/cloudformation-infra/files/greenfield.json.j2 dest=roles/cloudformation-infra/files/{{ stack_name }}-greenfield.json
   when: create_vpc == "yes"
+  vars:
+    stack_name: "{{stack_name}}"
 
 - name: Render Brownfield Template
   template: src=roles/cloudformation-infra/files/brownfield.json.j2 dest=roles/cloudformation-infra/files/{{ stack_name }}-brownfield.json
   when: create_vpc == "no" and byo_bastion == "no"
+  vars:
+    stack_name: "{{stack_name}}"
 
 - name: Render Brownfield BYO Bastion Template
   template: src=roles/cloudformation-infra/files/brownfield-byo-bastion.json.j2 dest=roles/cloudformation-infra/files/{{ stack_name }}-brownfield-byo-bastion.json
