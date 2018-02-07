@@ -459,7 +459,7 @@ class VMwareOnOCP(object):
         print "# Please note, if you have chosen to bring your own loadbalancer and NFS Server you will need to ensure that these records are added to DNS and properly resolve. "
 
         with open(self.inventory_file, 'w') as outfile:
-            json.dump(d, outfile)
+            json.dump(d, outfile, indent=4, sort_keys=True)
 
         if self.args.create_inventory:
             exit(0)
@@ -481,7 +481,16 @@ class VMwareOnOCP(object):
         if not self.no_confirm:
             click.confirm('Continue using these values?', abort=True)
 
-        if self.auth_type == 'ldap':
+        if self.auth_type == 'none':
+            playbooks = ["playbooks/ocp-install.yaml", "playbooks/minor-update.yaml"]
+            for ocp_file in playbooks:
+                for line in fileinput.input(ocp_file, inplace=True):
+                    if line.startswith('#openshift_master_identity_providers:'):
+                        line = line.replace('#', '    ')
+                        print line
+                    else:
+                        print line,
+        elif self.auth_type == 'ldap':
             l_bdn = ""
 
             for d in self.ldap_fqdn.split("."):
@@ -550,15 +559,11 @@ class VMwareOnOCP(object):
                 else:
                     print line,
 
-            if self.auth_type == 'none':
-                playbooks = ["playbooks/ocp-install.yaml", "playbooks/minor-update.yaml"]
-                for ocp_file in playbooks:
-                    for line in fileinput.input(ocp_file, inplace=True):
-                        if line.startswith('#openshift_master_identity_providers:'):
-                            line = line.replace('#', '    ')
-                            print line
-                        else:
-                            print line,
+        else:
+            print ("'auth_type' configuration has improper value '%s'. "
+                   "It is allowed to be either "
+                   "'ldap' or 'none'." % self.auth_type)
+            exit(1)
         if self.args.create_ocp_vars:
             exit(0)
 
