@@ -1,4 +1,5 @@
 ---
+#- include: "{{ openshift_ansible_dir }}/playbooks/byo/openshift-cluster/openshift-logging.yml"
 - include: "{{ openshift_ansible_dir }}/playbooks/byo/config.yml"
   vars:
     debug_level: 2
@@ -60,6 +61,7 @@
     openshift_hosted_registry_acceptschema2: true
     openshift_hosted_registry_enforcequota: true
     # metrics
+    openshift_metrics_install_metrics: true
     openshift_hosted_metrics_storage_kind: dynamic
     openshift_hosted_metrics_storage_volume_size: "{{ openshift_hosted_metrics_storage_volume_size }}"
     openshift_metrics_hawkular_nodeselector: {"role":"infra"}
@@ -67,9 +69,19 @@
     openshift_metrics_heapster_nodeselector: {"role":"infra"}
 
     # logging
+    #openshift_logging_master_public_url:
+    openshift_logging_install_logging: true
     openshift_logging_es_pvc_dynamic: true
     openshift_logging_es_pvc_size: "{{ openshift_hosted_logging_storage_volume_size }}"
     openshift_logging_es_cluster_size: 3
     openshift_logging_es_nodeselector: {"role":"infra"}
     openshift_logging_kibana_nodeselector: {"role":"infra"}
     openshift_logging_curator_nodeselector: {"role":"infra"}
+    openshift_logging_kibana_edge_term_policy: '' #omit instead of 'redirect'
+
+    certs_dir: ../../../rebaseproject/cloud
+    # see https://docs.openshift.com/container-platform/3.7/install_config/certificate_customization.html#configuring-custom-certificates
+    # openshift_master_overwrite_named_certificates: true
+    openshift_master_named_certificates: [{
+      "certfile": "{{certs_dir}}/openshift-master.cloud1.onecommons.net.fullchain.pem",
+      "keyfile": "{{certs_dir}}/openshift-master.cloud1.onecommons.net.key"}]

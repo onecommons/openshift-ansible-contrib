@@ -363,7 +363,7 @@ def launch_refarch_env(region=None,
                     playbook)
 
     if verbose > 0:
-      command += " -" + "".join(['v']*3)
+      command += " -" + "".join(['v']*1)
       click.echo('We are running: %s' % command)
 
     status = os.system(command)

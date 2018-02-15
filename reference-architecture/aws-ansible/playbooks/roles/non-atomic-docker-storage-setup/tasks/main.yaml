@@ -20,3 +20,16 @@
     group: root
     mode: 0644
   when: ansible_distribution == 'CentOS' and not openshift.common.is_atomic | bool
+
+- name: remove selinux-enabled from docker config
+  shell: "sed -i 's/--selinux-enabled//g' /etc/sysconfig/docker; systemctl restart docker"
+  when: openshift.common.is_atomic | bool
+
+# XXX ??
+# On an SELinux system, if you remove the --selinux-enabled option, you
+# also need to turn on the docker_transition_unconfined boolean.
+# setsebool -P docker_transition_unconfined 1
+
+# - name: disable --selinux-enabled from docker (and undo docker-latest)
+#   shell: "sed -i 's/--selinux-enabled//g' /etc/sysconfig/docker; sed -i '/DOCKERBINARY/s/^/#/g' /etc/sysconfig/docker; systemctl stop docker-latest; systemctl disable docker-latest --now; systemctl enable docker --now; systemctl start docker"
+#   when: openshift.common.is_atomic | bool
