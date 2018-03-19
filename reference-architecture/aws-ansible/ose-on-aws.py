@@ -24,7 +24,11 @@ import sys
               show_default=True)
 @click.option('--master-instance-type', default='m4.xlarge', help='ec2 instance type',
               show_default=True)
+@click.option('--master-node-count', default='3', help='Number of Master Nodes',
+              show_default=True)
 @click.option('--node-instance-type', default='m4.xlarge', help='ec2 instance type',
+              show_default=True)
+@click.option('--infra-node-count', default='3', help='Number of Infrastructure Nodes',
               show_default=True)
 @click.option('--app-instance-type', default='t2.large', help='ec2 instance type',
               show_default=True)
@@ -93,7 +97,9 @@ def launch_refarch_env(region=None,
                     ami=None,
                     no_confirm=False,
                     master_instance_type=None,
+                    master_node_count=None,
                     node_instance_type=None,
+                    infra_node_count=None,
                     app_instance_type=None,
                     app_node_count=None,
                     keypair=None,
@@ -170,6 +176,16 @@ def launch_refarch_env(region=None,
     public_subnet_id2 = click.prompt('Specify the second Public subnet within the existing VPC')
     public_subnet_id3 = click.prompt('Specify the third Public subnet within the existing VPC')
 
+  master_node_count = int(master_node_count)
+  if master_node_count > 3:
+    click.echo("Please choose a value between 1 and 3")
+    sys.exit(1)
+
+  infra_node_count = int(infra_node_count)
+  if infra_node_count > 3:
+    click.echo("Please choose a value between 1 and 3")
+    sys.exit(1)
+
   app_node_count = int(app_node_count)
   if app_node_count > 3:
     click.echo("Please choose a value between 1 and 3")
@@ -222,7 +238,9 @@ def launch_refarch_env(region=None,
   click.echo('\tami: %s' % ami)
   click.echo('\tregion: %s' % region)
   click.echo('\tmaster_instance_type: %s' % master_instance_type)
+  click.echo('\tmaster_node_count: %d' % master_node_count)
   click.echo('\tnode_instance_type: %s' % node_instance_type)
+  click.echo('\tinfra_node_count: %d' % infra_node_count)
   click.echo('\tapp_instance_type: %s' % app_instance_type)
   click.echo('\tapp_node_count: %d' % app_node_count)
   click.echo('\tkeypair: %s' % keypair)
@@ -261,7 +279,9 @@ def launch_refarch_env(region=None,
   if not no_confirm:
     click.confirm('Continue using these values?', abort=True)
 
-  playbooks = ['playbooks/infrastructure.yaml', 'playbooks/openshift-install.yaml']
+  playbooks = [ #'playbooks/infrastructure.yaml',
+                'playbooks/openshift-install.yaml'
+                ]
 
   for playbook in playbooks:
 
@@ -280,6 +300,15 @@ def launch_refarch_env(region=None,
     command='rm -rf .ansible/cached_facts'
     os.system(command)
 
+# XXX:
+    # [DEPRECATION WARNING]: The following are deprecated variables and will be no longer be used in the next minor release. Please update your inventory accordingly.
+    # openshift_hosted_logging_deploy
+    # openshift_hosted_logging_storage_volume_size
+    # openshift_hosted_metrics_deploy
+    # openshift_hosted_metrics_storage_volume_size
+
+    # override variables in openshift-setup.yaml
+    # --list-tasks
     command='ansible-playbook -i inventory/aws/hosts -e \'region=%s \
     stack_name=%s \
     ami=%s \
@@ -298,7 +327,9 @@ def launch_refarch_env(region=None,
     byo_bastion=%s \
     bastion_sg=%s \
     master_instance_type=%s \
+    master_node_count=%d \
     node_instance_type=%s \
+    infra_node_count=%d \
     app_instance_type=%s \
     app_node_count=%d \
     public_hosted_zone=%s \
@@ -338,7 +369,9 @@ def launch_refarch_env(region=None,
                     byo_bastion,
                     bastion_sg,
                     master_instance_type,
+                    int(master_node_count),
                     node_instance_type,
+                    int(infra_node_count),
                     app_instance_type,
                     int(app_node_count),
                     public_hosted_zone,
@@ -364,7 +397,7 @@ def launch_refarch_env(region=None,
 
     if verbose > 0:
       command += " -" + "".join(['v']*1)
-      click.echo('We are running: %s' % command)
+    click.echo('We are running: %s' % command)
 
     status = os.system(command)
     if os.WIFEXITED(status) and os.WEXITSTATUS(status) != 0:
