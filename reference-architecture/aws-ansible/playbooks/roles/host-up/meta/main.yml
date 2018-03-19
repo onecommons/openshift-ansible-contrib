@@ -1,0 +1,4 @@
+---
+# see https://github.com/gaqzi/ansible-ssh-config/
+dependencies:
+  - gaqzi.ssh-config
