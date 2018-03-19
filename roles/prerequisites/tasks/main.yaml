@@ -50,7 +50,7 @@
       state: started
       enabled: true
 
-  when: not openshift.common.is_atomic | bool
+  when: not openshift_is_atomic | bool
 
 # Fail as early as possible if Atomic and old version of Docker
 # - block:

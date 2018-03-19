@@ -30,11 +30,5 @@ gluster_group: "{{ stack_name }}-{{ gluster_stack_name }}"
 openshift_aws_clusterid: "{{ stack_name }}"
 openshift_ansible_dir: "{{openshift_ansible_dir}}"
 debug_level: 4
-openshift_disable_check: disk_availability,docker_storage,memory_availability
-certs_dir: ../../../rebaseproject/cloud
-# see https://docs.openshift.com/container-platform/3.7/install_config/certificate_customization.html#configuring-custom-certificates
-openshift_master_named_certificates: [{
-  "certfile": "{{certs_dir}}/openshift-master.cloud1.onecommons.net.crt",
-  "keyfile": "{{certs_dir}}/openshift-master.cloud1.onecommons.net.key"}]
-origin_release: 3.7.0
+origin_release: 3.9.0
 openshift_docker_selinux_enabled: false

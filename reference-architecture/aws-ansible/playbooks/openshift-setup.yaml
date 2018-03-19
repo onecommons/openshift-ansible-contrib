@@ -1,6 +1,7 @@
 ---
-#- include: "{{ openshift_ansible_dir }}/playbooks/byo/openshift-cluster/openshift-logging.yml"
-- include: "{{ openshift_ansible_dir }}/playbooks/byo/config.yml"
+#- include: "{{ openshift_ansible_dir }}/playbooks/openshift-metrics/config.yml"
+- include: "{{ openshift_ansible_dir }}/playbooks/deploy_cluster.yml"
+#- include: "{{ openshift_ansible_dir }}/playbooks/common/private/components.yml"
   vars:
     debug_level: 2
     openshift_debug_level: "{{ debug_level }}"
@@ -61,6 +62,8 @@
     openshift_hosted_registry_acceptschema2: true
     openshift_hosted_registry_enforcequota: true
     # metrics
+    openshift_metrics_image_version: v3.9
+
     openshift_metrics_install_metrics: true
     openshift_hosted_metrics_storage_kind: dynamic
     openshift_hosted_metrics_storage_volume_size: "{{ openshift_hosted_metrics_storage_volume_size }}"
@@ -79,9 +82,13 @@
     openshift_logging_curator_nodeselector: {"role":"infra"}
     openshift_logging_kibana_edge_term_policy: '' #omit instead of 'redirect'
 
+    openshift_web_console_install: false
+    openshift_install_examples: false
+    openshift_enable_service_catalog: false
+
     certs_dir: ../../../rebaseproject/cloud
-    # see https://docs.openshift.com/container-platform/3.7/install_config/certificate_customization.html#configuring-custom-certificates
-    # openshift_master_overwrite_named_certificates: true
+    # see https://docs.openshift.com/container-platform/latest/install_config/certificate_customization.html#configuring-custom-certificates
+    openshift_master_overwrite_named_certificates: true
     openshift_master_named_certificates: [{
-      "certfile": "{{certs_dir}}/openshift-master.cloud1.onecommons.net.fullchain.pem",
-      "keyfile": "{{certs_dir}}/openshift-master.cloud1.onecommons.net.key"}]
+      "certfile": "{{certs_dir}}/{{ openshift_master_cluster_public_hostname }}.fullchain.pem",
+      "keyfile": "{{certs_dir}}/{{ openshift_master_cluster_public_hostname }}.key"}]
