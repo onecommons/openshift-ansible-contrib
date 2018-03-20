@@ -10,31 +10,16 @@
     dest: ../static-inventory
     remote_src: false
 
-- name: command for masters
-  shell: sed -i  '/\[masters\]/a {{ hostvars[item].ec2_tag_Name }}' ../static-inventory
-  with_items:
-  - "{{ groups['tag_openshift_role_master'] }}"
-  when:
-  - hostvars[item]['ec2_tag_KubernetesCluster'] == "{{ stack_name }}"
-
-
-- name: command for masters
-  shell: sed -i  '/\[etcd\]/a {{ hostvars[item].ec2_tag_Name }}' ../static-inventory
-  with_items:
-  - "{{ groups['tag_openshift_role_master'] }}"
-  when:
-  - hostvars[item]['ec2_tag_KubernetesCluster'] == "{{ stack_name }}"
-
 - name: define nodes
   lineinfile:
     line: "{{ hostvars[item].ec2_tag_Name }} openshift_node_labels=\"{'role': 'master'}\""
-    insertafter: "[nodes]"
+    insertafter: [nodes]
     state: present
     dest: ../static-inventory
   with_items:
   - "{{ groups['tag_openshift_role_master'] }}"
   when:
-  - hostvars[item]['ec2_tag_KubernetesCluster'] == "{{ stack_name }}"
+  - hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name
 
 - name: define nodes
   lineinfile:
@@ -45,7 +30,7 @@
   with_items:
   - "{{ groups['tag_openshift_role_app'] }}"
   when:
-  - hostvars[item]['ec2_tag_KubernetesCluster'] == "{{ stack_name }}"
+  - hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name
 
 - name: define nodes
   lineinfile:
@@ -56,7 +41,7 @@
   with_items:
   - "{{ groups['tag_openshift_role_infra'] }}"
   when:
-  - hostvars[item]['ec2_tag_KubernetesCluster'] == "{{ stack_name }}"
+  - hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name
 
 - name: define nodes
   lineinfile:
@@ -68,3 +53,14 @@
   when:
   - groups.tag_openshift_role_storage is defined and hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name
   ignore_errors: true
+
+- name: define master hosts
+  lineinfile:
+    line: "{{ hostvars[item].ec2_tag_Name }}"
+    insertafter: '^\[masters\]'
+    state: present
+    dest: ../static-inventory
+  with_items:
+  - "{{ groups['tag_openshift_role_master'] }}"
+  when:
+  - hostvars[item]['ec2_tag_KubernetesCluster'] == stack_name

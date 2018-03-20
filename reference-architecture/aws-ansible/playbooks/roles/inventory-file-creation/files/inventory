@@ -60,10 +60,9 @@ openshift_logging_es_nodeselector={"role":"infra"}
 openshift_logging_kibana_nodeselector={"role":"infra"}
 openshift_logging_curator_nodeselector={"role":"infra"}
 
-
-
 [masters]
 
-[etcd]
+[etcd:children]
+masters
 
 [nodes]
